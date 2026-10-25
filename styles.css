@@ -223,3 +223,18 @@ body.is-leaving-for-game:after{content:"";position:fixed;z-index:10000;inset:0;b
 .games-grid-wrap:focus-visible{outline:2px solid #d3f36b;outline-offset:4px}
 .grid-scroll-hint{display:none}
 @media(max-width:760px){.games-grid{min-width:780px}.game-title{font-size:8px}.game-description{font-size:9px}.grid-scroll-hint{display:block;margin:-5px 0 12px;text-align:right;color:#b9afd9;font:6px 'Press Start 2P',monospace;letter-spacing:.2px}}
+
+
+/* Featured games get a warm gold cabinet treatment. */
+.featured-section{padding-top:34px;border-top:3px groove #b88a2a;margin-top:26px}
+.featured-section .section-kicker,.featured-section .section-kicker span{color:#ffd45a}
+.featured-section .section-heading h2{color:#fff0b0;text-shadow:2px 2px 0 #5a3c08,4px 4px 0 #b88a2a}
+.featured-section .carousel-count b{color:#ffd45a}
+.featured-section .arrow-button{border-color:#b88a2a;color:#ffe89a}
+.featured-section .arrow-button:hover{border-color:#ffe89a;color:#ffe89a}
+.featured-section .arrow-next{background:#ffd45a;color:#382705;border-color:#fff0b0;box-shadow:2px 3px 0 #100e25}
+.featured-section .arrow-next:hover{background:#ffe89a;color:#382705}
+.featured-section .new-card{border-color:#bd902f;background:linear-gradient(145deg,#493616,#282044);box-shadow:3px 4px 0 #13102d,inset 0 1px 0 #fff2c522}
+.featured-section .new-card:hover{border-color:#ffe084;box-shadow:3px 6px 0 #13102d,0 0 15px #ffd45a66}
+.featured-section .new-tag{background:#ffd45a;color:#382705;border-color:#fff0b0}
+.featured-section .new-meta span{color:#ffd45a}
