@@ -1,14 +1,14 @@
 const laptopIcon = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2.5" width="10" height="8" rx="1.1"></rect><path d="M1.7 12.5h12.6l-.8 1H2.5z"></path></svg>';
 const mobileIcon = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4.4" y="1.5" width="7.2" height="13" rx="1.4"></rect><path d="M6.8 3.3h2.4M7.3 12.6h1.4"></path></svg>';
 const games = [
-  {number:1,title:'Endless Skater',description:'Skate through endless streets, land tricks, and rack up points as you unlock new spots.',creator:'KC',laptop:true,mobile:true,art:'🛹',color:'#a9d94d',href:'games/endless-skater.html'},
-  {number:2,title:'Potato Wars',description:'Battle the alien potato, leap between platforms, collect coins, and unleash potato slams.',creator:'OP',laptop:true,mobile:true,art:'🥔',color:'#e79a51',href:'games/potato-wars.html'},
+  {number:1,title:'Endless Skater',featured:true,description:'Skate through endless streets, land tricks, and rack up points as you unlock new spots.',creator:'KC',laptop:true,mobile:true,art:'🛹',color:'#a9d94d',href:'games/endless-skater.html'},
+  {number:2,title:'Potato Wars',featured:true,description:'Battle the alien potato, leap between platforms, collect coins, and unleash potato slams.',creator:'OP',laptop:true,mobile:true,art:'🥔',color:'#e79a51',href:'games/potato-wars.html'},
   {number:3,title:'MineWorld',description:'Mine resources, craft gear, and battle bosses across Woodman Park, the Deep Forest, and Space.',creator:'LC',laptop:true,mobile:true,art:'⛏️',color:'#4ea66e',href:'games/mine-world.html'},
   {number:4,title:"Crabby's Ocean Quest",description:'Help Crabby eat fish, dodge sharks, and explore an endless ocean full of alien surprises.',creator:'MH',laptop:true,mobile:true,art:'🦀',color:'#38afc1',href:'games/crabbys-ocean-quest.html'},
   {number:5,title:'Donut Mania',description:'Choose a bunny or dragon and race to catch the most falling donuts in one minute.',creator:'E',laptop:true,mobile:true,art:'🍩',color:'#df78b6',href:'games/donut-mania.html'},
-  {number:6,title:'Bunny Hops',description:'Help a bouncy bunny knock apples from a tree and collect red and golden fruit.',creator:'A',laptop:true,mobile:true,art:'🐰',color:'#91c958',href:'games/bunny-hops.html'},
+  {number:6,title:'Bunny Hops',featured:true,description:'Help a bouncy bunny knock apples from a tree and collect red and golden fruit.',creator:'A',laptop:true,mobile:true,art:'🐰',color:'#91c958',href:'games/bunny-hops.html'},
   {number:7,title:'Stickgirl Candy Adventure',description:'Guide Stickgirl through candy-filled platforms, collect sweets, and take on King Candy.',creator:'MH',laptop:true,mobile:false,art:'🍭',color:'#ae75dc',href:'games/stickgirl-candy-adventure.html'},
-  {number:8,title:'Astro Explorer',description:'Explore destructible alien planets, mine resources, and uncover ancient technology.',creator:'C',laptop:true,mobile:true,art:'🪐',color:'#587ad3',href:'games/astro-explorer.html'},
+  {number:8,title:'Astro Explorer',featured:true,description:'Explore destructible alien planets, mine resources, and uncover ancient technology.',creator:'C',laptop:true,mobile:true,art:'🪐',color:'#587ad3',href:'games/astro-explorer.html'},
   ...Array.from({length:32},(_,i)=>({number:i+9,title:`Game slot ${String(i+9).padStart(2,'0')}`,description:'A little adventure goes here',creator:'SOCC Creator',laptop:true,mobile:true}))
 ];
 const newest = [
@@ -33,12 +33,34 @@ function renderGames(){
   }).join('');
 }
 filter.addEventListener('change',renderGames);renderGames();
-const track=document.querySelector('#carousel-track');
-track.innerHTML=newest.map(g=>{const card=`<div class="new-art" style="--game-art-color:${g.color||'#7564f5'}"><span class="new-tag">JUST DROPPED</span><span class="mini-icon" aria-hidden="true">${g.icon}</span></div><div class="new-meta"><h3>${g.title}</h3><span>NEW ✦</span></div>`;return g.href?`<a class="new-card new-card-link" href="${g.href}" aria-label="Play ${g.title}">${card}</a>`:`<article class="new-card">${card}</article>`}).join('');
-let slide=0;const count=document.querySelector('#slide-current');
-function moveCarousel(direction){const card=track.querySelector('.new-card');if(!card)return;const style=getComputedStyle(track);const gap=parseFloat(style.gap)||0;const step=card.getBoundingClientRect().width+gap;const max=Math.max(0,newest.length-Math.floor(document.querySelector('.carousel-window').clientWidth/step));slide=(slide+direction+max+1)%(max+1);track.style.transform=`translateX(${-slide*step}px)`;count.textContent=String(slide+1).padStart(2,'0')}
-document.querySelector('#next').addEventListener('click',()=>moveCarousel(1));document.querySelector('#previous').addEventListener('click',()=>moveCarousel(-1));
-let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{slide=0;track.style.transform='translateX(0)';count.textContent='01'},100)});
+const featuredGames=games.filter(game=>game.featured).map(game=>({number:game.number,icon:game.art,title:game.title,art:game.art,color:game.color,href:game.href}));
+function setupCarousel(items,trackId,previousId,nextId,counterId,tag,badge){
+  const carouselTrack=document.querySelector(`#${trackId}`);
+  const windowEl=carouselTrack.closest('.carousel-window');
+  const counter=document.querySelector(`#${counterId}`);
+  carouselTrack.innerHTML=items.map(game=>{
+    const contents=`<div class="new-art" style="--game-art-color:${game.color||'#7564f5'}"><span class="new-tag">${tag}</span><span class="mini-icon" aria-hidden="true">${game.icon}</span></div><div class="new-meta"><h3>${game.title}</h3><span>${badge}</span></div>`;
+    return game.href?`<a class="new-card new-card-link" href="${game.href}" aria-label="Play ${game.title}">${contents}</a>`:`<article class="new-card">${contents}</article>`;
+  }).join('');
+  let current=0;
+  function move(direction){
+    const card=carouselTrack.querySelector('.new-card');
+    if(!card)return;
+    const gap=parseFloat(getComputedStyle(carouselTrack).gap)||0;
+    const step=card.getBoundingClientRect().width+gap;
+    const max=Math.max(0,items.length-Math.floor(windowEl.clientWidth/step));
+    current=(current+direction+max+1)%(max+1);
+    carouselTrack.style.transform=`translateX(${-current*step}px)`;
+    counter.textContent=String(current+1).padStart(2,'0');
+  }
+  document.querySelector(`#${nextId}`).addEventListener('click',()=>move(1));
+  document.querySelector(`#${previousId}`).addEventListener('click',()=>move(-1));
+  return ()=>{current=0;carouselTrack.style.transform='translateX(0)';counter.textContent='01'};
+}
+const resetNewestCarousel=setupCarousel(newest,'carousel-track','previous','next','slide-current','JUST DROPPED','NEW ✦');
+const resetFeaturedCarousel=setupCarousel(featuredGames,'featured-track','featured-previous','featured-next','featured-slide-current','FEATURED','PLAYER PICK ✦');
+let resizeTimer;
+window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{resetNewestCarousel();resetFeaturedCarousel()},100)});
 
 let gameIsLaunching=false;
 function launchGame(game,sourceCard){

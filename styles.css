@@ -216,3 +216,10 @@ body.is-leaving-for-game:after{content:"";position:fixed;z-index:10000;inset:0;b
 @media(max-width:640px){.submit-dialog{width:calc(100vw - 16px);max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px);border-width:3px;border-radius:13px}.submit-dialog-shell{padding:20px 16px}.submit-dialog-heading h2{font-size:14px}.submit-dialog-heading p{font-size:10px}.submission-layout{grid-template-columns:1fr}.thumbnail-designer{display:grid;grid-template-columns:1fr 120px;align-items:start}.thumbnail-designer>.form-label{grid-column:1/-1}.thumbnail-preview{grid-column:2;grid-row:2/5;width:110px}.thumbnail-preview span{font-size:42px}.preset-group{grid-column:1}.icon-presets{grid-template-columns:repeat(4,1fr)}.icon-preset{min-height:40px;font-size:21px}.color-group{grid-column:1/-1}.color-preset{width:36px;height:36px}.submission-note{font-size:8px}}
 .form-field:has(#submission-file:focus-visible) .file-drop{outline:3px solid #d3f36b;outline-offset:3px}
 .icon-preset:focus-visible,.color-preset:focus-visible,.dialog-close:focus-visible,.cancel-submit:focus-visible,.submit-form-button:focus-visible{outline:3px solid #fff9d3;outline-offset:3px}
+
+/* Keep the catalog at five columns; on phones, swipe the wide cabinet deck. */
+.games-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.games-grid-wrap{width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#8070c0 #17152f}
+.games-grid-wrap:focus-visible{outline:2px solid #d3f36b;outline-offset:4px}
+.grid-scroll-hint{display:none}
+@media(max-width:760px){.games-grid{min-width:780px}.game-title{font-size:8px}.game-description{font-size:9px}.grid-scroll-hint{display:block;margin:-5px 0 12px;text-align:right;color:#b9afd9;font:6px 'Press Start 2P',monospace;letter-spacing:.2px}}

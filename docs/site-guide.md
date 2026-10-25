@@ -11,7 +11,7 @@ SOCC Arcade is a static, GitHub Pages-friendly host for small HTML games. The pa
 - **Cabinet controls:** a decorative joystick, two buttons, and “Choose Your Game” label bridge the marquee and game selection area.
 - **Selection deck:** newest games and the main catalog sit in framed, illuminated panels with beveled borders, dark violet surfaces, neon green accents, and retro pixel lettering.
 - **Palette and type:** deep indigo and violet cabinet paint, warm yellow trim, lime controls, pink highlights, and the Press Start 2P pixel display font paired with DM Sans for small descriptive text.
-- **Responsive behavior:** the cabinet narrows for tablets and phones; the marquee title, control strip, carousel, and game grid resize for smaller screens.
+- **Responsive behavior:** the cabinet narrows for tablets and phones; the marquee title and control strip resize for smaller screens; the five-column game grid becomes horizontally swipeable on narrow screens so card details stay legible.
 
 ## Page functionality
 
@@ -23,9 +23,9 @@ SOCC Arcade is a static, GitHub Pages-friendly host for small HTML games. The pa
 - **Press Start for Fun** selects a random playable game and launches it through the marquee loading animation.
 - **Submit a game** opens a submission dialog for the game name, description, creator, one HTML file, and thumbnail design. The thumbnail designer previews preset icons and backing colors.
 
-### Newest-games carousel
+### Featured Games and New & Shiny carousels
 
-The horizontal carousel is populated from the `newest` array in `script.js`. Previous and next buttons slide through the entries. On desktop, the layout is sized to show about three and a half cards; narrow screens show a partial next card. Entries with an `href` open the game.
+Both horizontal carousels show about three and a half cards at a time on desktop, with a partial next card on narrow screens. New & Shiny uses the `newest` array in `script.js`. Featured Games is generated from catalog entries marked `featured: true`; set or remove that flag to curate the section. Previous and next buttons operate independently, and playable cards open their game. The current featured games are Endless Skater, Potato Wars, Astro Explorer, and Bunny Hops.
 
 ### Game catalog
 

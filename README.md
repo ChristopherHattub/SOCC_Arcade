@@ -16,7 +16,7 @@ The site has no build step or dependencies. The `index.html` file is the entry p
 
 ## Add games
 
-Game metadata and the newest-games carousel are configured in `script.js`. Put each self-contained HTML game under `games/`, then add its title, description, creator, device support, and relative `href` to the `games` array. Add it to `newest` when it should appear in the carousel. Keep `number` unique and update the count in the page heading when the collection changes.
+Game metadata, featured selections, and the newest-games carousel are configured in `script.js`. Put each self-contained HTML game under `games/`, then add its title, description, creator, device support, and relative `href` to the `games` array. Set `featured: true` on a game to include it in Featured Games; add it to `newest` when it should appear in New & Shiny. Keep `number` unique and update the count in the page heading when the collection changes.
 
 The first eight playable games are configured in `script.js` and stored under `games/`: **Endless Skater** (KC), **Potato Wars** (OP), **MineWorld** (LC), **Crabby's Ocean Quest** (MH), **Donut Mania** (E), **Bunny Hops** (A), **Stickgirl Candy Adventure** (MH), and **Astro Explorer** (C). The remaining 32 catalog slots are placeholders.
 
