@@ -9,7 +9,10 @@ const games = [
   {number:6,title:'Bunny Hops',featured:true,description:'Help a bouncy bunny knock apples from a tree and collect red and golden fruit.',creator:'A',laptop:true,mobile:true,art:'🐰',color:'#91c958',href:'games/bunny-hops.html'},
   {number:7,title:'Stickgirl Candy Adventure',description:'Guide Stickgirl through candy-filled platforms, collect sweets, and take on King Candy.',creator:'MH',laptop:true,mobile:false,art:'🍭',color:'#ae75dc',href:'games/stickgirl-candy-adventure.html'},
   {number:8,title:'Astro Explorer',featured:true,description:'Explore destructible alien planets, mine resources, and uncover ancient technology.',creator:'C',laptop:true,mobile:true,art:'🪐',color:'#587ad3',href:'games/astro-explorer.html'},
-  ...Array.from({length:32},(_,i)=>({number:i+9,title:`Game slot ${String(i+9).padStart(2,'0')}`,description:'A little adventure goes here',creator:'SOCC Creator',laptop:true,mobile:true}))
+  {number:9,title:'FortMorning',description:'Gather wood, build defenses, and battle to be the last player standing.',creator:'AC',laptop:true,mobile:false,art:'🪓',color:'#72a936',href:'games/fortmorning.html'},
+  {number:10,title:'Pineapple Head',description:'Collect fruit, grow your empire, and expand from New Hampshire to the cosmos.',creator:'ML',laptop:true,mobile:true,art:'🍍',color:'#e5b83e',href:'games/pineapple-head.html'},
+  {number:11,title:'La Festa Simulator',featured:true,description:'Run a busy pizzeria shift as chef, server, or another member of the team.',creator:'JP',laptop:true,mobile:true,art:'🍕',color:'#ca5946',href:'games/la-festa-simulator.html'},
+  ...Array.from({length:32},(_,i)=>({number:i+12,title:`Game slot ${String(i+12).padStart(2,'0')}`,description:'A little adventure goes here',creator:'SOCC Creator',laptop:true,mobile:true}))
 ];
 const newest = [
   {number:1,icon:'🛹',title:'Endless Skater',art:'🛹',color:'#a9d94d',href:'games/endless-skater.html'},
@@ -29,10 +32,15 @@ function renderGames(){
     const supportedDevices=[g.laptop?'laptop':'',g.mobile?'mobile':''].filter(Boolean).join(' and ');
     const deviceIcons=`${g.laptop?`<span class="support-icon" title="Laptop supported">${laptopIcon}</span>`:''}${g.mobile?`<span class="support-icon" title="Mobile supported">${mobileIcon}</span>`:''}`;
     const card=`<div class="game-thumb" style="--game-art-color:${g.color||'#302b59'}"><span class="slot-number">SLOT ${String(g.number).padStart(2,'0')}</span><span class="thumb-placeholder ${g.href?'game-art-playable':''}" aria-hidden="true">${g.href?g.art:'＋'}</span></div><div class="game-info"><div class="game-title-row"><span class="game-title">${g.title}</span><span class="support-icons" aria-label="Supported on ${supportedDevices}">${deviceIcons}</span></div><p class="game-description">${g.description}</p><div class="game-byline"><span class="creator"><span class="creator-dot">✦</span>${g.creator}</span><span>${g.href?'PLAY ▶':'♡ 0'}</span></div></div>`;
-    return g.href?`<a class="game-card game-card-link" href="${g.href}" aria-label="Play ${g.title} by ${g.creator}">${card}</a>`:`<article class="game-card" aria-label="${g.title} placeholder">${card}</article>`;
+    return g.href?`<div class="game-card-shell"><a class="game-card game-card-link" href="${g.href}" aria-label="Play ${g.title} by ${g.creator}">${card}</a>${gameDownloadMenu(g)}</div>`:`<article class="game-card" aria-label="${g.title} placeholder">${card}</article>`;
   }).join('');
 }
 filter.addEventListener('change',renderGames);renderGames();
+function gameDownloadMenu(game){
+  if(!game?.href)return '';
+  const filename=game.href.split('/').pop();
+  return `<details class="game-actions"><summary aria-label="More options for ${game.title}" title="More options">•••</summary><div class="game-actions-menu"><a href="${game.href}" download="${filename}">↓ Download game</a></div></details>`;
+}
 const featuredGames=games.filter(game=>game.featured).map(game=>({number:game.number,icon:game.art,title:game.title,art:game.art,color:game.color,href:game.href}));
 function setupCarousel(items,trackId,previousId,nextId,counterId,tag,badge){
   const carouselTrack=document.querySelector(`#${trackId}`);
@@ -40,21 +48,83 @@ function setupCarousel(items,trackId,previousId,nextId,counterId,tag,badge){
   const counter=document.querySelector(`#${counterId}`);
   carouselTrack.innerHTML=items.map(game=>{
     const contents=`<div class="new-art" style="--game-art-color:${game.color||'#7564f5'}"><span class="new-tag">${tag}</span><span class="mini-icon" aria-hidden="true">${game.icon}</span></div><div class="new-meta"><h3>${game.title}</h3><span>${badge}</span></div>`;
-    return game.href?`<a class="new-card new-card-link" href="${game.href}" aria-label="Play ${game.title}">${contents}</a>`:`<article class="new-card">${contents}</article>`;
+    return game.href?`<article class="new-card">${`<a class="new-card-link" href="${game.href}" aria-label="Play ${game.title}">${contents}</a>`}${gameDownloadMenu(game)}</article>`:`<article class="new-card">${contents}</article>`;
   }).join('');
   let current=0;
-  function move(direction){
+  let dragPointer=null;
+  let dragStartX=0;
+  let dragStartTranslate=0;
+  let dragStep=0;
+  let maxIndex=0;
+  let dragMoved=false;
+  let suppressClick=false;
+  function metrics(){
     const card=carouselTrack.querySelector('.new-card');
-    if(!card)return;
+    if(!card)return null;
     const gap=parseFloat(getComputedStyle(carouselTrack).gap)||0;
     const step=card.getBoundingClientRect().width+gap;
     const max=Math.max(0,items.length-Math.floor(windowEl.clientWidth/step));
-    current=(current+direction+max+1)%(max+1);
-    carouselTrack.style.transform=`translateX(${-current*step}px)`;
+    return {step,max};
+  }
+  function showPosition(index){
+    const size=metrics();
+    if(!size)return;
+    current=Math.max(0,Math.min(size.max,index));
+    carouselTrack.style.transform=`translateX(${-current*size.step}px)`;
     counter.textContent=String(current+1).padStart(2,'0');
+  }
+  function move(direction){
+    const size=metrics();
+    if(!size)return;
+    showPosition((current+direction+size.max+1)%(size.max+1));
   }
   document.querySelector(`#${nextId}`).addEventListener('click',()=>move(1));
   document.querySelector(`#${previousId}`).addEventListener('click',()=>move(-1));
+  windowEl.style.touchAction='pan-y';
+  windowEl.addEventListener('pointerdown',event=>{
+    if((event.pointerType==='mouse'&&event.button!==0)||event.target.closest('.carousel-controls,.game-actions'))return;
+    const size=metrics();
+    if(!size||size.max===0)return;
+    dragPointer=event.pointerId;
+    dragStartX=event.clientX;
+    dragStep=size.step;
+    maxIndex=size.max;
+    dragStartTranslate=-current*dragStep;
+    dragMoved=false;
+  });
+  windowEl.addEventListener('pointermove',event=>{
+    if(event.pointerId!==dragPointer)return;
+    const delta=event.clientX-dragStartX;
+    if(!dragMoved&&Math.abs(delta)>5){
+      dragMoved=true;
+      windowEl.classList.add('is-dragging');
+      windowEl.setPointerCapture(event.pointerId);
+    }
+    if(dragMoved){
+      const translate=Math.max(-maxIndex*dragStep,Math.min(0,dragStartTranslate+delta));
+      carouselTrack.style.transform=`translateX(${translate}px)`;
+    }
+  });
+  function finishDrag(event){
+    if(event.pointerId!==dragPointer)return;
+    if(dragMoved){
+      const delta=event.clientX-dragStartX;
+      const translate=Math.max(-maxIndex*dragStep,Math.min(0,dragStartTranslate+delta));
+      showPosition(Math.round(-translate/dragStep));
+      suppressClick=true;
+      window.setTimeout(()=>{suppressClick=false},400);
+    }
+    dragPointer=null;
+    windowEl.classList.remove('is-dragging');
+  }
+  windowEl.addEventListener('pointerup',finishDrag);
+  windowEl.addEventListener('pointercancel',finishDrag);
+  windowEl.addEventListener('click',event=>{
+    if(!suppressClick)return;
+    event.preventDefault();
+    event.stopPropagation();
+    suppressClick=false;
+  },true);
   return ()=>{current=0;carouselTrack.style.transform='translateX(0)';counter.textContent='01'};
 }
 const resetNewestCarousel=setupCarousel(newest,'carousel-track','previous','next','slide-current','JUST DROPPED','NEW ✦');
@@ -63,6 +133,24 @@ let resizeTimer;
 window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{resetNewestCarousel();resetFeaturedCarousel()},100)});
 
 let gameIsLaunching=false;
+function resetLaunchState(){
+  gameIsLaunching=false;
+  document.body.classList.remove('is-leaving-for-game');
+  document.querySelector('.site-header')?.classList.remove('is-loading-game');
+  const screen=document.querySelector('#launch-screen');
+  screen?.classList.remove('is-visible','has-screen-tile');
+  screen?.setAttribute('aria-hidden','true');
+  screen?.querySelectorAll('.game-launch-screen-tile').forEach(tile=>tile.remove());
+  document.querySelectorAll('.game-launch-tile').forEach(el=>el.remove());
+  document.querySelectorAll('.is-launching-source').forEach(el=>el.classList.remove('is-launching-source'));
+}
+// Safari and other browsers may restore this page from the back/forward cache
+// after a game. Clear the outgoing transition so the home screen is visible.
+window.addEventListener('pageshow',resetLaunchState);
+document.addEventListener('click',event=>{
+  if(event.target.closest('.game-actions'))return;
+  document.querySelectorAll('.game-actions[open]').forEach(menu=>{menu.open=false});
+});
 function launchGame(game,sourceCard){
   if(gameIsLaunching||!game?.href)return;
   gameIsLaunching=true;
@@ -193,5 +281,5 @@ submissionForm.addEventListener('submit',event=>{
     'I have attached the HTML game file to this email.'
   ].join('\n');
   feedback.textContent='Email draft opening. Attach the selected HTML file before sending.';
-  window.location.href=`mailto:hello@socc.games?subject=${encodeURIComponent(`SOCC Arcade game submission: ${name}`)}&body=${encodeURIComponent(body)}`;
+  window.location.href=`mailto:chattub@gmail.com?subject=${encodeURIComponent(`SOCC Arcade game submission: ${name}`)}&body=${encodeURIComponent(body)}`;
 });

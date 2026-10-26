@@ -25,11 +25,11 @@ SOCC Arcade is a static, GitHub Pages-friendly host for small HTML games. The pa
 
 ### Featured Games and New & Shiny carousels
 
-Both horizontal carousels show about three and a half cards at a time on desktop, with a partial next card on narrow screens. New & Shiny uses the `newest` array in `script.js`. Featured Games is generated from catalog entries marked `featured: true`; set or remove that flag to curate the section. Previous and next buttons operate independently, and playable cards open their game. The current featured games are Endless Skater, Potato Wars, Astro Explorer, and Bunny Hops.
+Both horizontal carousels show about three and a half cards at a time on desktop, with a partial next card on narrow screens. New & Shiny uses the `newest` array in `script.js`. Featured Games is generated from catalog entries marked `featured: true`; set or remove that flag to curate the section. Previous and next buttons operate independently, and playable cards open their game. The current featured games are Endless Skater, Potato Wars, Astro Explorer, Bunny Hops, and La Festa Simulator.
 
 ### Game catalog
 
-The catalog is populated from the `games` array and renders 40 slots. Each entry can include:
+The catalog is populated from the `games` array and renders 43 slots. Each entry can include:
 
 - `number`: unique slot number
 - `title`: visible game title

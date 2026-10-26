@@ -238,3 +238,25 @@ body.is-leaving-for-game:after{content:"";position:fixed;z-index:10000;inset:0;b
 .featured-section .new-card:hover{border-color:#ffe084;box-shadow:3px 6px 0 #13102d,0 0 15px #ffd45a66}
 .featured-section .new-tag{background:#ffd45a;color:#382705;border-color:#fff0b0}
 .featured-section .new-meta span{color:#ffd45a}
+
+/* Small per-game download menus on the catalog and carousel cards. */
+.game-card-shell{position:relative;min-width:0}
+.new-card{position:relative}
+.game-actions{position:absolute;z-index:12;top:7px;right:7px;font-family:'DM Sans',sans-serif}
+.game-actions summary{width:27px;height:24px;display:grid;place-items:center;list-style:none;border:1px solid #fff9;border-radius:6px;background:#191632d9;color:#fff9d3;font-size:11px;font-weight:900;letter-spacing:1px;line-height:1;cursor:pointer;box-shadow:0 2px 5px #100e2599;backdrop-filter:blur(4px)}
+.game-actions summary::-webkit-details-marker{display:none}
+.game-actions summary:hover,.game-actions[open] summary{border-color:#ffd45a;background:#382b50;color:#ffd45a}
+.game-actions summary:focus-visible,.game-actions-menu a:focus-visible{outline:3px solid #fff0b0;outline-offset:2px}
+.game-actions-menu{position:absolute;top:calc(100% + 5px);right:0;z-index:20;min-width:132px;padding:5px;border:1px solid #bd902f;border-radius:7px;background:#211b39;box-shadow:0 5px 15px #0c0a1dbb}
+.game-actions-menu a{display:block;padding:8px 9px;border-radius:4px;color:#fff0b0;text-decoration:none;white-space:nowrap;font-size:9px;font-weight:800}
+.game-actions-menu a:hover{background:#ffd45a;color:#382705}
+.featured-section .game-actions-menu{border-color:#ffd45a}
+
+/* Keep the catalog's hover lift inside the horizontal scroll viewport. */
+.games-grid-wrap{padding-top:8px;margin-top:-8px}
+/* Let pointer dragging move either game carousel on desktop and touch screens. */
+.carousel-window{cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.carousel-window .new-card-link{cursor:grab}
+.carousel-window.is-dragging{cursor:grabbing}
+.carousel-window.is-dragging .new-card-link{cursor:grabbing}
+.carousel-window.is-dragging .carousel-track{transition:none}
