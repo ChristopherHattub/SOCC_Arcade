@@ -5,16 +5,20 @@ const games = [
   {number:2,title:'Potato Wars',featured:true,description:'Battle the alien potato, leap between platforms, collect coins, and unleash potato slams.',creator:'OP',laptop:true,mobile:true,art:'🥔',color:'#e79a51',href:'games/potato-wars.html'},
   {number:3,title:'MineWorld',description:'Mine resources, craft gear, and battle bosses across Woodman Park, the Deep Forest, and Space.',creator:'LC',laptop:true,mobile:true,art:'⛏️',color:'#4ea66e',href:'games/mine-world.html'},
   {number:4,title:"Crabby's Ocean Quest",description:'Help Crabby eat fish, dodge sharks, and explore an endless ocean full of alien surprises.',creator:'MH',laptop:true,mobile:true,art:'🦀',color:'#38afc1',href:'games/crabbys-ocean-quest.html'},
-  {number:5,title:'Donut Mania',description:'Choose a bunny or dragon and race to catch the most falling donuts in one minute.',creator:'E',laptop:true,mobile:true,art:'🍩',color:'#df78b6',href:'games/donut-mania.html'},
-  {number:6,title:'Bunny Hops',featured:true,description:'Help a bouncy bunny knock apples from a tree and collect red and golden fruit.',creator:'A',laptop:true,mobile:true,art:'🐰',color:'#91c958',href:'games/bunny-hops.html'},
+  {number:5,title:'Donut Mania',description:'Choose a bunny or dragon and race to catch the most falling donuts in one minute.',creator:'EF',laptop:true,mobile:true,art:'🍩',color:'#df78b6',href:'games/donut-mania.html'},
+  {number:6,title:'Bunny Hops',featured:true,description:'Help a bouncy bunny knock apples from a tree and collect red and golden fruit.',creator:'AL',laptop:true,mobile:true,art:'🐰',color:'#91c958',href:'games/bunny-hops.html'},
   {number:7,title:'Stickgirl Candy Adventure',description:'Guide Stickgirl through candy-filled platforms, collect sweets, and take on King Candy.',creator:'MH',laptop:true,mobile:false,art:'🍭',color:'#ae75dc',href:'games/stickgirl-candy-adventure.html'},
-  {number:8,title:'Astro Explorer',featured:true,description:'Explore destructible alien planets, mine resources, and uncover ancient technology.',creator:'C',laptop:true,mobile:true,art:'🪐',color:'#587ad3',href:'games/astro-explorer.html'},
+  {number:8,title:'Astro Explorer',featured:true,description:'Explore destructible alien planets, mine resources, and uncover ancient technology.',creator:'CM',laptop:true,mobile:true,art:'🪐',color:'#587ad3',href:'games/astro-explorer.html'},
   {number:9,title:'FortMorning',description:'Gather wood, build defenses, and battle to be the last player standing.',creator:'AC',laptop:true,mobile:false,art:'🪓',color:'#72a936',href:'games/fortmorning.html'},
   {number:10,title:'Pineapple Head',description:'Collect fruit, grow your empire, and expand from New Hampshire to the cosmos.',creator:'ML',laptop:true,mobile:true,art:'🍍',color:'#e5b83e',href:'games/pineapple-head.html'},
-  {number:11,title:'La Festa Simulator',featured:true,description:'Run a busy pizzeria shift as chef, server, or another member of the team.',creator:'JP',laptop:true,mobile:true,art:'🍕',color:'#ca5946',href:'games/la-festa-simulator.html'},
-  ...Array.from({length:32},(_,i)=>({number:i+12,title:`Game slot ${String(i+12).padStart(2,'0')}`,description:'A little adventure goes here',creator:'SOCC Creator',laptop:true,mobile:true}))
+  {number:11,title:'La Festa Simulator',featured:true,featuredOrder:1,description:'Run a busy pizzeria shift as chef, server, or another member of the team.',creator:'JP',laptop:true,mobile:true,art:'🍕',color:'#ca5946',href:'games/la-festa-simulator.html'},
+  {number:12,title:'Bobby Game',description:'Mine blocks, gather power, and battle a giant pirate turtle across a blocky adventure.',creator:'CB',laptop:true,mobile:false,art:'⛏️',color:'#56a6b5',href:'games/bobby-game.html'},
+  {number:13,title:'BasketBall Showdown',description:'Drive, pass, and shoot in a top-down basketball game for one or two local players.',creator:'MS',laptop:true,mobile:false,art:'🏀',color:'#5680c5',href:'games/basketball-showdown.html'},
+  ...Array.from({length:32},(_,i)=>({number:i+14,title:`Game slot ${String(i+14).padStart(2,'0')}`,description:'A little adventure goes here',creator:'SOCC Creator',laptop:true,mobile:true}))
 ];
 const newest = [
+  {number:13,icon:'🏀',title:'BasketBall Showdown',art:'🏀',color:'#5680c5',href:'games/basketball-showdown.html'},
+  {number:12,icon:'⛏️',title:'Bobby Game',art:'⛏️',color:'#56a6b5',href:'games/bobby-game.html'},
   {number:1,icon:'🛹',title:'Endless Skater',art:'🛹',color:'#a9d94d',href:'games/endless-skater.html'},
   {number:2,icon:'🥔',title:'Potato Wars',art:'🥔',color:'#e79a51',href:'games/potato-wars.html'},
   {number:3,icon:'⛏️',title:'MineWorld',art:'⛏️',color:'#4ea66e',href:'games/mine-world.html'},
@@ -41,7 +45,7 @@ function gameDownloadMenu(game){
   const filename=game.href.split('/').pop();
   return `<details class="game-actions"><summary aria-label="More options for ${game.title}" title="More options">•••</summary><div class="game-actions-menu"><a href="${game.href}" download="${filename}">↓ Download game</a></div></details>`;
 }
-const featuredGames=games.filter(game=>game.featured).map(game=>({number:game.number,icon:game.art,title:game.title,art:game.art,color:game.color,href:game.href}));
+const featuredGames=games.filter(game=>game.featured).sort((a,b)=>(a.featuredOrder||Infinity)-(b.featuredOrder||Infinity)).map(game=>({number:game.number,icon:game.art,title:game.title,art:game.art,color:game.color,href:game.href}));
 function setupCarousel(items,trackId,previousId,nextId,counterId,tag,badge){
   const carouselTrack=document.querySelector(`#${trackId}`);
   const windowEl=carouselTrack.closest('.carousel-window');
@@ -281,5 +285,5 @@ submissionForm.addEventListener('submit',event=>{
     'I have attached the HTML game file to this email.'
   ].join('\n');
   feedback.textContent='Email draft opening. Attach the selected HTML file before sending.';
-  window.location.href=`mailto:chattub@gmail.com?subject=${encodeURIComponent(`SOCC Arcade game submission: ${name}`)}&body=${encodeURIComponent(body)}`;
+  window.location.href=`mailto:kids@socclab.org?subject=${encodeURIComponent(`SOCC Arcade game submission: ${name}`)}&body=${encodeURIComponent(body)}`;
 });

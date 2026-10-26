@@ -251,6 +251,7 @@ body.is-leaving-for-game:after{content:"";position:fixed;z-index:10000;inset:0;b
 .game-actions-menu a{display:block;padding:8px 9px;border-radius:4px;color:#fff0b0;text-decoration:none;white-space:nowrap;font-size:9px;font-weight:800}
 .game-actions-menu a:hover{background:#ffd45a;color:#382705}
 .featured-section .game-actions-menu{border-color:#ffd45a}
+.new-card .new-art{background:linear-gradient(145deg,color-mix(in srgb,var(--game-art-color,#7564f5) 78%,white),var(--game-art-color,#7564f5))!important}
 
 /* Keep the catalog's hover lift inside the horizontal scroll viewport. */
 .games-grid-wrap{padding-top:8px;margin-top:-8px}
